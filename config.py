@@ -33,6 +33,21 @@ def init(conf_path, section):
     print 'INFO: Get config:', _conf
 
 
+def put(key, val):
+    """Put extra entry."""
+    global _conf
+    _conf = _conf or {}
+    _conf[key] = val
+
+
+def merge(other_dict):
+    """Merge with other dict."""
+    global _conf
+    _conf = _conf or {}
+    for k, v in other_dict.iteritems():
+        _conf[k] = v
+
+
 def get(key, default=None):
     """Get key from global config."""
     global _conf

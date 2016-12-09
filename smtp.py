@@ -26,23 +26,24 @@ import config
 
 _smtp = None
 
-def _init():
-    global _smtp
-    _smtp = smtplib.SMTP(config.get('smtp_server'), config.get('smtp_port'))
-    _smtp.ehlo()
-    _smtp.starttls()
-    _smtp.login(config.get('smtp_user'), config.get('smtp_pass'))
+def _init_smtp():
+    client = smtplib.SMTP(config.get('smtp_server'), config.get('smtp_port'))
+    client.ehlo()
+    client.starttls()
+    client.login(config.get('smtp_user'), config.get('smtp_pass'))
+    return client
 
 
 def send(subject, content, receiver, cc=None):
     """Send email."""
-    if not _smtp:
-        _init()
     msg = email.mime.text.MIMEText(content, 'plain', 'utf-8')
     msg['Subject'] = email.header.Header(subject, 'utf-8')
     msg['From'] = config.get('smtp_sender')
     msg['To'] = receiver
     print 'INFO: Sent mail <{}> with {} bytes to [{}]'.format(subject, len(content), receiver)
+
+    global _smtp
+    _smtp = _smtp or _init_smtp()
     _smtp.sendmail(config.get('smtp_sender'), receiver, msg.as_string())
 
 
