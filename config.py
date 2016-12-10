@@ -10,6 +10,7 @@ Usage:
 """
 
 import ConfigParser
+import sys
 import types
 
 _conf = None
@@ -33,6 +34,20 @@ def init(conf_path, section):
     print 'INFO: Get config:', _conf
 
 
+def init_or_die(conf_path, section='base'):
+    """Init the conf from conf_path, or die on failures."""
+    try:
+        init(conf_path, section)
+    except Exception as e:
+        sys.stderr.write(str(e))
+        sys.exit(1)
+
+    global _conf
+    if len(_conf) == 0:
+        sys.stderr.write('ERROR: Config is empty after reading {}'.format(conf_path))
+        sys.exit(1)
+
+
 def put(key, val):
     """Put extra entry."""
     global _conf
@@ -52,6 +67,6 @@ def get(key, default=None):
     """Get key from global config."""
     global _conf
     if not _conf:
-        print 'ERROR: Config has not been initialized yet'
+        sys.stderr.write('ERROR: Config has not been initialized yet\n')
         return default
     return _conf.get(key, default)
