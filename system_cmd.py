@@ -11,8 +11,8 @@ def run(*args):
     print 'INFO: Run system command:', cmd
     p = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE, close_fds=True)
     return (p.wait(),
-            None if not p.stdout else p.stdout.read().strip().splitlines(),
-            None if not p.stderr else p.stderr.read().strip())
+            None if not p.stdout else p.stdout.read(),
+            None if not p.stderr else p.stderr.read())
 
 
 def run_or_die(*args):
