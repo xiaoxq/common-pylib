@@ -1,6 +1,7 @@
 """
 SMTP library.
 Make sure you have a config file with these settings:
+[smtp]
 smtp_server =
 smtp_port =
 smtp_user =
