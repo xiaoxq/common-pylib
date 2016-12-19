@@ -73,6 +73,6 @@ def get_collection(db_name, collection_name):
 
 
 if __name__ == "__main__":
-    config.put('mongodb_host', '172.19.57.27')
+    config.put('mongodb_host', 'localhost')
     config.put('mongodb_port', 27017)
     print _conn_singleton().database_names()
