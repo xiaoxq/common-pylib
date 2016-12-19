@@ -32,6 +32,11 @@ def timestamp_to_time_str(ts, format='%Y-%m-%d-%H-%M-%S'):
     dt = EPOCH + datetime.timedelta(seconds = int(ts))
     return dt.strftime(format)
 
+
+def current_time_str(format='%Y-%m-%d-%H-%M-%S'):
+    """Get current time string."""
+    return datetime.datetime.now().strftime(format)
+
 if __name__ == '__main__':
     if time_str_to_timestamp('19700101-010000') != 3600:
         print "ERROR: Wrong result: 19700101-010000 ->", time_str_to_timestamp('19700101-010000')

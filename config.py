@@ -16,7 +16,7 @@ import types
 _conf = None
 
 
-def init(conf_path, section):
+def init(conf_path, section='base'):
     """Init the conf from conf_path."""
     global _conf
     _conf = {}
