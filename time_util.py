@@ -1,6 +1,6 @@
 """Time utils."""
-
 import datetime
+import glog
 import re
 
 EPOCH = datetime.datetime(1970, 1, 1)
@@ -22,7 +22,7 @@ def time_str_to_timestamp(datetime_str):
     elif len(packed_str) >= 8:
         dt = datetime.datetime.strptime(packed_str[:8], '%Y%m%d')
     else:
-        print 'ERROR: Unknown time str:', datetime_str
+        glog.error('Unknown time str: {}'.format(datetime_str))
         return -1
     return datetime_to_timestamp(dt)
 
@@ -39,9 +39,9 @@ def current_time_str(format='%Y-%m-%d-%H-%M-%S'):
 
 if __name__ == '__main__':
     if time_str_to_timestamp('19700101-010000') != 3600:
-        print "ERROR: Wrong result: 19700101-010000 ->", time_str_to_timestamp('19700101-010000')
-        exit(1)
-    if timestamp_to_time_str(3600) != '1970-01-01-01-00-00':
-        print "ERROR: Wrong answer: 3600 ->", timestamp_to_time_str(3600)
-        exit(1)
-    print "All passed!"
+        glog.fatal('Wrong result: 19700101-010000 -> {}'.format(
+                time_str_to_timestamp('19700101-010000')))
+    elif timestamp_to_time_str(3600) != '1970-01-01-01-00-00':
+        glog.fatal('Wrong answer: 3600 -> {}'.format(timestamp_to_time_str(3600)))
+    else:
+        glog.info('All passed!')

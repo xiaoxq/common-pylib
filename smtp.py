@@ -20,6 +20,7 @@ Binary usage:
 #coding: utf-8
 import email.header
 import email.mime.text
+import glog
 import smtplib
 import sys
 
@@ -41,7 +42,7 @@ def send(subject, content, receiver, cc=None):
     msg['Subject'] = email.header.Header(subject, 'utf-8')
     msg['From'] = config.get('smtp_sender')
     msg['To'] = receiver
-    print 'INFO: Sent mail <{}> with {} bytes to [{}]'.format(subject, len(content), receiver)
+    glog.info('Sent mail <{}> with {} bytes to [{}]'.format(subject, len(content), receiver))
 
     global _smtp
     _smtp = _smtp or _init_smtp()
@@ -50,6 +51,7 @@ def send(subject, content, receiver, cc=None):
 
 def quit():
     """Quit from smtp connection."""
+    global _smtp
     _smtp.quit()
     _smtp = None
 

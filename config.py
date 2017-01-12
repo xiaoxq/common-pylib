@@ -10,13 +10,14 @@ Usage:
 """
 
 import ConfigParser
+import glog
 import sys
 import types
 
 _conf = None
 
 
-def init(conf_path, section='base'):
+def init(conf_path, section):
     """Init the conf from conf_path."""
     global _conf
     _conf = {}
@@ -31,20 +32,20 @@ def init(conf_path, section='base'):
     else:
         for sec in section:
             _read_section(sec)
-    print 'INFO: Get config:', _conf
+    glog.info('Get config: {}'.format(_conf))
 
 
-def init_or_die(conf_path, section='base'):
+def init_or_die(conf_path, section):
     """Init the conf from conf_path, or die on failures."""
     try:
         init(conf_path, section)
     except Exception as e:
-        sys.stderr.write(str(e))
+        glog.fatal(str(e))
         sys.exit(1)
 
     global _conf
     if len(_conf) == 0:
-        sys.stderr.write('ERROR: Config is empty after reading {}'.format(conf_path))
+        glog.fatal('Config is empty after reading {}'.format(conf_path))
         sys.exit(1)
 
 
@@ -66,7 +67,7 @@ def merge(other_dict):
 def get(key, default=None):
     """Get key from global config."""
     global _conf
-    if not _conf:
-        sys.stderr.write('ERROR: Config has not been initialized yet\n')
+    if _conf is None:
+        glog.error('Config has not been initialized yet')
         return default
     return _conf.get(key, default)

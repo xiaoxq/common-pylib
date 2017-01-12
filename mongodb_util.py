@@ -15,10 +15,14 @@ find_query = {
     "score": {"$gt": 0},
     # Other selectors: gt, lt, gte, lte, ne; exists, in, nin, or, nor, all, mode, size
 }
+fields_selector = {
+    "email": 1
+}
 sort_query = ("dateofbirth", pymongo.DESCENDING)
 
 users.find()
 users.find(query_dict)
+users.find(query_dict, fields_selector)
 users.find(query_dict, snapshot=True)
 users.find_one(...)
 
@@ -47,32 +51,33 @@ users.remove(find_query)                # Async remove.
 users.remove(find_query, safe=True)     # Sync remove.
 users.remove(None, safe=True)           # Remove all.
 """
+import glog
 import pymongo
 import sys
 
 import config
 
-_conn = None
-def _conn_singleton():
-    global _conn
-    if _conn:
-        return _conn
+_client = None
+def _client_singleton():
+    global _client
+    if _client:
+        return _client
 
     try:
-        _conn = pymongo.Connection(host=config.get('mongodb_host', 'localhost'),
-                                   port=int(config.get('mongodb_port', 27017)))
-        print 'INFO: Connect to MongoDB successfully'
-    except pymongo.errors.ConnectionFailure, e:
-        sys.stderr.write('ERROR: Could not connect to MongoDB: %s' % e)
+        _client = pymongo.MongoClient(config.get('mongodb_host', 'localhost'),
+                                      int(config.get('mongodb_port', 27017)))
+        glog.info('Connect to MongoDB successfully')
+    except pymongo.errors.ConnectionFailure as e:
+        glog.fatal('Connect to MongoDB failed: {}'.format(e))
         sys.exit(1)
-    return _conn
+    return _client
+
 
 def get_collection(db_name, collection_name):
     """Get DB handler."""
-    return _conn_singleton()[db_name].__getattr__(collection_name)
-
+    return _client_singleton()[db_name][collection_name]
 
 if __name__ == "__main__":
     config.put('mongodb_host', 'localhost')
     config.put('mongodb_port', 27017)
-    print _conn_singleton().database_names()
+    print _client_singleton().database_names()
