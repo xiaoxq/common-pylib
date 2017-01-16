@@ -1,15 +1,16 @@
 """
 MongoDB util.
+Requirements: pip install glog pymongo
 
 Usages:
-users = get_collection('mydb', 'users') # Get collection.
+users = get_collection('mydb', 'users')         # Get collection.
 
-######################################### Insert
-users.insert(user_doc)                  # Async insert.
-users.insert(user_doc, safe=True)       # Sync insert.
-users.insert(user_doc, w=2)             # At least insert to 2 nodes.
+################################################# Insert
+users.insert(user_doc)                          # Async insert.
+users.insert(user_doc, safe=True)               # Sync insert.
+users.insert(user_doc, w=2)                     # At least insert to 2 nodes.
 
-######################################### Lookup
+################################################# Lookup
 find_query = {
     "firstname": "jane",
     "score": {"$gt": 0},
@@ -30,7 +31,7 @@ users.find_one(...)
 ...find().count()
 ...find().sort(sort_query).limit(10).skip(20)
 
-######################################### Update
+################################################# Update
 update_query = {
     "$set": {
         "email": "janedoe74@example2.com"
@@ -41,15 +42,24 @@ update_query = {
     # Other updaters: inc, push, pushAll, pop, pull, pullAll, addToSet, rename
 }
 
-users.update(find_query, new_user_doc)  # Async full update.
-users.update(find_query, update_query)  # Async partial update.
-users.update(..., safe=True)            # Sync update.
-users.update(..., multi=True)           # Update multiple.
+users.update(find_query, new_user_doc)          # Async full update.
+users.update(find_query, update_query)          # Async partial update.
+users.find_and_modify(find_query, update_query) # Also return the doc.
+users.update(..., safe=True)                    # Sync update.
+users.update(..., multi=True)                   # Update multiple.
+users.update(..., upsert=True)                  # Update or insert.
 
-######################################### Delete
-users.remove(find_query)                # Async remove.
-users.remove(find_query, safe=True)     # Sync remove.
-users.remove(None, safe=True)           # Remove all.
+################################################# Delete
+users.remove(find_query)                        # Async remove.
+users.remove(find_query, safe=True)             # Sync remove.
+users.remove(None, safe=True)                   # Remove all.
+################################################# Index
+users.create_index('username')                  # Create single index.
+users.create_index('username', name='name_idx') # Create named index.
+users.create_index([("first_name", pymongo.ASCENDING), ...] # Create multi indexes.
+users.drop_index('username')                    # Drop single index.
+users.drop_index('name_idx')                    # Drop named index.
+users.drop_indexes()                            # Drop all indexes.
 """
 import glog
 import pymongo
@@ -71,6 +81,7 @@ def _client_singleton():
         glog.fatal('Connect to MongoDB failed: {}'.format(e))
         sys.exit(1)
     return _client
+
 
 
 def get_collection(db_name, collection_name):
