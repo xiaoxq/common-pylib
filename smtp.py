@@ -26,15 +26,6 @@ import sys
 
 import config
 
-_smtp = None
-
-def _init_smtp():
-    client = smtplib.SMTP(config.get('smtp_server'), config.get('smtp_port'))
-    client.ehlo()
-    client.starttls()
-    client.login(config.get('smtp_user'), config.get('smtp_pass'))
-    return client
-
 
 def send(subject, content, receiver, cc=None):
     """Send email."""
@@ -42,18 +33,34 @@ def send(subject, content, receiver, cc=None):
     msg['Subject'] = email.header.Header(subject, 'utf-8')
     msg['From'] = config.get('smtp_sender')
     msg['To'] = receiver
+    if cc:
+        msg['Cc'] = cc
+        receiver += ',' + cc
+
     glog.info('Sent mail <{}> with {} bytes to [{}]'.format(subject, len(content), receiver))
+    s = smtplib.SMTP(config.get('smtp_server'), config.get('smtp_port'))
+    s.ehlo()
+    s.starttls()
+    s.login(config.get('smtp_user'), config.get('smtp_pass'))
+    s.sendmail(msg['From'], receiver, msg.as_string())
+    s.quit()
 
-    global _smtp
-    _smtp = _smtp or _init_smtp()
-    _smtp.sendmail(config.get('smtp_sender'), receiver, msg.as_string())
 
+def send_from_local(subject, content, sender, receiver, cc=None):
+    """Send email."""
+    msg = email.mime.text.MIMEText(content, 'plain', 'utf-8')
+    msg['Subject'] = email.header.Header(subject, 'utf-8')
+    msg['From'] = sender
+    msg['To'] = receiver
+    if cc:
+        msg['Cc'] = cc
+        receiver += ',' + cc
 
-def quit():
-    """Quit from smtp connection."""
-    global _smtp
-    _smtp.quit()
-    _smtp = None
+    glog.info('Sent mail <{}> with {} bytes to [{}]'.format(subject, len(content), receiver))
+    s = smtplib.SMTP('localhost')
+    s.sendmail(sender, receiver, msg.as_string())
+    s.quit()
+
 
 if __name__ == '__main__':
     conf_file, subject, receiver = sys.argv[1:]

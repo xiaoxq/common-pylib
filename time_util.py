@@ -19,6 +19,8 @@ def time_str_to_timestamp(datetime_str):
     packed_str = re.sub("[^0-9]", "", datetime_str)
     if len(packed_str) >= 14:
         dt = datetime.datetime.strptime(packed_str[:14], '%Y%m%d%H%M%S')
+    elif len(packed_str) >= 12:
+        dt = datetime.datetime.strptime(packed_str[:12], '%Y%m%d%H%M')
     elif len(packed_str) >= 8:
         dt = datetime.datetime.strptime(packed_str[:8], '%Y%m%d')
     else:
@@ -36,6 +38,11 @@ def timestamp_to_time_str(ts, format='%Y-%m-%d-%H-%M-%S'):
 def current_time_str(format='%Y-%m-%d-%H-%M-%S'):
     """Get current time string."""
     return datetime.datetime.now().strftime(format)
+
+
+def current_timestamp():
+    """Get current timestamp."""
+    return datetime_to_timestamp(datetime.datetime.now())
 
 if __name__ == '__main__':
     if time_str_to_timestamp('19700101-010000') != 3600:
