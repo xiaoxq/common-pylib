@@ -13,7 +13,8 @@ def serve():
     authorizer = pyftpdlib.authorizers.DummyAuthorizer()
     authorizer.add_user(config.get('ftp_user'),
                         config.get('ftp_pass'),
-                        config.get('ftp_root'))
+                        config.get('ftp_root'),
+                        perm="elradfmw")
 
     handler = pyftpdlib.handlers.FTPHandler
     handler.authorizer = authorizer
@@ -23,5 +24,5 @@ def serve():
     server.serve_forever()
 
 if __name__ == '__main__':
-    config.init(sys.argv[1], 'ftp_server')
+    config.init(sys.argv[1])
     serve()

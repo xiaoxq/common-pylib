@@ -1,6 +1,6 @@
 """
 MongoDB util.
-Requirements: pip install glog pymongo
+Requirements: pip install glog pymongo (>=3.4)
 
 Usages:
 users = get_collection('mydb', 'users')         # Get collection.
@@ -84,9 +84,10 @@ def _client_singleton():
 
 def get_collection(db_name, collection_name):
     """Get DB handler."""
-    return _client_singleton()[db_name][collection_name]
+    db = _client_singleton()[db_name]
+    db.authenticate(config.get('mongodb_user'), config.get('mongodb_pass'))
+    return db[collection_name]
 
 if __name__ == "__main__":
-    config.put('mongodb_host', 'localhost')
-    config.put('mongodb_port', 27017)
+    config.init(sys.argv[1])
     print _client_singleton().database_names()

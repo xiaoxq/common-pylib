@@ -64,5 +64,5 @@ def send_from_local(subject, content, sender, receiver, cc=None):
 
 if __name__ == '__main__':
     conf_file, subject, receiver = sys.argv[1:]
-    config.init(conf_file, 'smtp')
+    config.init(conf_file)
     send(subject, sys.stdin.read(), receiver)
