@@ -1,6 +1,7 @@
 """String utils."""
 import re
 
+
 def split(input_str, spliters=' '):
     """Split string to parts."""
     pattern = '[{}]'.format(spliters)
