@@ -2,8 +2,7 @@
 Global config.
 Usage:
     Init once with:
-        config.init(conf_path, 'section')
-        config.init(conf_path, ('section1', 'section2', ...))
+        config.init(conf_path)
     Then query with:
         config.get(key)
         config.get(key, default)
@@ -17,36 +16,19 @@ import types
 _conf = None
 
 
-def init(conf_path, section):
+def init(conf_path):
     """Init the conf from conf_path."""
     global _conf
     _conf = {}
 
     cf = ConfigParser.SafeConfigParser()
     cf.read(conf_path)
-    def _read_section(sec):
-        for k, v in cf.items(sec):
-            _conf[k] = v
-    if type(section) == types.StringType:
-        _read_section(section)
-    else:
-        for sec in section:
-            _read_section(sec)
+    for line in file(conf_path):
+        line = line.strip()
+        if line.startswith('[') and line.endswith(']'):
+            for k, v in cf.items(line[1:-1]):
+                _conf[k] = v
     glog.info('Get config: {}'.format(_conf))
-
-
-def init_or_die(conf_path, section):
-    """Init the conf from conf_path, or die on failures."""
-    try:
-        init(conf_path, section)
-    except Exception as e:
-        glog.fatal(str(e))
-        sys.exit(1)
-
-    global _conf
-    if len(_conf) == 0:
-        glog.fatal('Config is empty after reading {}'.format(conf_path))
-        sys.exit(1)
 
 
 def put(key, val):
