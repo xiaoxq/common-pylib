@@ -16,7 +16,7 @@ import sys
 import colored_glog as glog
 import gflag_util
 
-gflags.DEFINE_string('ftp_host', '', 'FTP host.')
+gflags.DEFINE_string('ftp_host', '0.0.0.0', 'FTP host.')
 gflags.DEFINE_integer('ftp_port', 21, 'FTP port.')
 
 

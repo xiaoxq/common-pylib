@@ -9,7 +9,7 @@ def init():
     """Init gflags from argv."""
     try:
         sys.argv = gflags.FLAGS(sys.argv)
-    except gflags.FlagsError, e:
+    except gflags.FlagsError as e:
         glog.fatal('\n{}\nUsage: {} ARGS\n{}'.format(e, sys.argv[0], gflags.FLAGS))
         sys.exit(1)
 
