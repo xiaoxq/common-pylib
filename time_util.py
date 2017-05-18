@@ -1,7 +1,8 @@
 """Time utils."""
 import datetime
-import glog
 import re
+
+import colored_glog as glog
 
 EPOCH = datetime.datetime(1970, 1, 1)
 

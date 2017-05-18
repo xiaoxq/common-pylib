@@ -1,7 +1,8 @@
 """System command utils."""
-import glog
 import subprocess as sp
 import sys
+
+import colored_glog as glog
 
 _NULL_FD = open('/dev/null', 'w')
 
@@ -9,7 +10,7 @@ _NULL_FD = open('/dev/null', 'w')
 def run(*args):
     """Get (returncode, stdout, stderr) of the command."""
     cmd = ' '.join(args)
-    glog.info('$> {}'.format(cmd))
+    glog.info('SYSTEM> {}'.format(cmd))
     p = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE, close_fds=True)
     return (p.wait(),
             None if not p.stdout else p.stdout.read(),
@@ -37,5 +38,5 @@ def run_and_alert(*args):
 def run_in_background(*args):
     """Run command in background."""
     cmd = ' '.join(args)
-    glog.info('$> {} &'.format(cmd))
+    glog.info('SYSTEM> {}'.format(cmd))
     sp.Popen(cmd, shell=True, stdout=_NULL_FD, stderr=_NULL_FD, close_fds=True)

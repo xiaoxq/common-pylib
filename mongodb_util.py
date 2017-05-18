@@ -60,34 +60,27 @@ users.drop_index('username')                    # Drop single index.
 users.drop_index('name_idx')                    # Drop named index.
 users.drop_indexes()                            # Drop all indexes.
 """
-import glog
+import gflags
 import pymongo
-import sys
 
-import config
-
-_client = None
-def _client_singleton():
-    global _client
-    if _client:
-        return _client
-
-    try:
-        _client = pymongo.MongoClient(config.get('mongodb_host', 'localhost'),
-                                      int(config.get('mongodb_port', 27017)))
-        glog.info('Connect to MongoDB successfully')
-    except pymongo.errors.ConnectionFailure as e:
-        glog.fatal('Connect to MongoDB failed: {}'.format(e))
-        sys.exit(1)
-    return _client
+gflags.DEFINE_string('mongo_host', '0.0.0.0', 'MongoDB host ip.')
+gflags.DEFINE_integer('mongo_port', 27017, 'MongoDB port.')
+gflags.DEFINE_string('mongo_db_name', None, 'MongoDB db name.')
+gflags.DEFINE_string('mongo_user', None, 'MongoDB user.')
+gflags.DEFINE_string('mongo_pass', None, 'MongoDB password.')
 
 
-def get_collection(db_name, collection_name):
+def _get_db():
+    G = gflags.FLAGS
+    client = pymongo.MongoClient(G.mongo_host, G.mongo_port)
+    db = client[G.mongo_db_name]
+    db.authenticate(gflags.FLAGS.mongo_host, config.get('mongodb_pass'))
+    return db
+
+
+def get_collection(collection_name):
     """Get DB handler."""
-    db = _client_singleton()[db_name]
-    db.authenticate(config.get('mongodb_user'), config.get('mongodb_pass'))
-    return db[collection_name]
+    return _get_db()[collection_name]
 
 if __name__ == "__main__":
-    config.init(sys.argv[1])
-    print _client_singleton().database_names()
+    print _get_db().collection_names()

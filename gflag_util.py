@@ -1,7 +1,8 @@
 """GFlags utils."""
 import gflags
-import glog
 import sys
+
+import colored_glog as glog
 
 
 def init():
