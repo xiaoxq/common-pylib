@@ -1,6 +1,10 @@
+#!/usr/bin/env python
+
 """GFlags utils."""
-import gflags
+
 import sys
+
+import gflags
 
 import colored_glog as glog
 

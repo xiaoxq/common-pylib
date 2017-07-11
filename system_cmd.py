@@ -1,4 +1,8 @@
+#!/usr/bin/env python
+#  coding: utf-8
+
 """System command utils."""
+
 import subprocess as sp
 import sys
 
@@ -8,7 +12,7 @@ _NULL_FD = open('/dev/null', 'w')
 
 
 def run(*args):
-    """Get (returncode, stdout, stderr) of the command."""
+    """Get (ret_code, stdout, stderr) of the command."""
     cmd = ' '.join(args)
     glog.info('SYSTEM> {}'.format(cmd))
     p = sp.Popen(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE, close_fds=True)

@@ -1,4 +1,7 @@
+#!/usr/bin/env python
+
 """GFlags utils."""
+
 import glog
 import termcolor
 

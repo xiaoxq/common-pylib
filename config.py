@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Global config.
 Usage:
@@ -9,19 +11,8 @@ Usage:
 """
 
 import ConfigParser
+
 import colored_glog as glog
-
-
-def init_conf_dict(conf_path):
-    """Init a conf dict from conf_path."""
-    conf_dict = {}
-    cf = ConfigParser.SafeConfigParser()
-    cf.read(conf_path)
-    for line in file(conf_path):
-        line = line.strip()
-        if line.startswith('[') and line.endswith(']'):
-            conf_dict.update(cf.items(line[1:-1]))
-    return conf_dict
 
 _conf = {}
 
@@ -29,7 +20,12 @@ _conf = {}
 def init(conf_path):
     """Init global conf dict from conf_path."""
     global _conf
-    _conf.update(init_conf_dict(conf_path))
+    cf = ConfigParser.SafeConfigParser()
+    cf.read(conf_path)
+    for line in file(conf_path):
+        line = line.strip()
+        if line.startswith('[') and line.endswith(']'):
+            _conf.update(cf.items(line[1:-1]))
     glog.info('Get global config: {}'.format(_conf))
 
 

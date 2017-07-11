@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 MongoDB util.
 Requirements: pip install glog pymongo (>=3.4)
@@ -60,6 +62,7 @@ users.drop_index('username')                    # Drop single index.
 users.drop_index('name_idx')                    # Drop named index.
 users.drop_indexes()                            # Drop all indexes.
 """
+
 import gflags
 import pymongo
 
@@ -74,7 +77,7 @@ def _get_db():
     G = gflags.FLAGS
     client = pymongo.MongoClient(G.mongo_host, G.mongo_port)
     db = client[G.mongo_db_name]
-    db.authenticate(gflags.FLAGS.mongo_host, config.get('mongodb_pass'))
+    db.authenticate(G.mongo_user, G.mongo_pass)
     return db
 
 
@@ -82,5 +85,11 @@ def get_collection(collection_name):
     """Get DB handler."""
     return _get_db()[collection_name]
 
-if __name__ == "__main__":
+
+def main(argv):
+    """For testing."""
     print _get_db().collection_names()
+
+if __name__ == "__main__":
+    import google.apputils.app
+    google.apputils.app.run()

@@ -1,8 +1,17 @@
+#!/usr/bin/env python
+#  coding: utf-8
+
 """Time utils."""
+
 import datetime
+import pytz
 import re
 
+import gflags
+
 import colored_glog as glog
+
+gflags.DEFINE_string('timezone', 'America/Los_Angeles', 'Timezone.')
 
 EPOCH = datetime.datetime(1970, 1, 1)
 
@@ -38,12 +47,12 @@ def timestamp_to_time_str(ts, format='%Y-%m-%d-%H-%M-%S'):
 
 def current_time_str(format='%Y-%m-%d-%H-%M-%S'):
     """Get current time string."""
-    return datetime.datetime.now().strftime(format)
+    return datetime.datetime.now(pytz.timezone(gflags.FLAGS.timezone)).strftime(format)
 
 
 def current_timestamp():
     """Get current timestamp."""
-    return datetime_to_timestamp(datetime.datetime.now())
+    return time_str_to_timestamp(current_time_str())
 
 if __name__ == '__main__':
     if time_str_to_timestamp('19700101-010000') != 3600:
